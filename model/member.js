@@ -14,15 +14,7 @@ let MemberSchema = new mongoose.Schema({
     }
 });
 
-MemberSchema.methods.findMember = function (studentid) {
-	return new Promise((resolve,reject) => {
-		let member = this.model('Member');
-		member.findOne({_id:studentid}).then(m => {
-			resolve(m);
-		})
-			.then()
-	});
-}
+
 
 let Member = User.discriminator('Member', MemberSchema);
 

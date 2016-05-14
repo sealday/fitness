@@ -34,6 +34,11 @@ CoachSchema.methods.selectCourse = function (courseid) {
     });
 }
 
+/**
+ * 教练都是教哪些学员
+ * @param memberid
+ * @returns {Promise}
+ */
 CoachSchema.methods.selectMember = function (memberid) {
     return new Promise((resolve,reject)=>{
         Member.findOne({_id:memberid}).then(m =>{

@@ -122,6 +122,24 @@ UserSchema.methods.login = function(username, password) {
 	});
 }
 
+/**
+ * 关键字查找vip的用户名{name}这个字段
+ * @param keyword
+ * @returns {Promise}
+ */
+UserSchema.methods.searchUser = function (keyword) {
+	return new Promise((resolve,reject) => {
+		let user = this.model('User');
+		user.find({name:{$regex:keyword}}).then(c => {
+			resolve(c);
+		}).then(null,err => {
+			reject(err);
+		});
+	});
+}
+
+
+
 let User = mongoose.model('User', UserSchema);
 
 module.exports = User;
