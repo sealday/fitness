@@ -30,17 +30,16 @@ UserSchema.methods.addUser = function(username, rawPassword) {
 				let user = new User({username, password});
 				user.save()
 					.then(u => {
-						console.log("--");
 						resolve(u);
 					})
 					.then(null, err => {
-						console.log("--------");
 						reject(err);
 					});
 			}
 		});
 	});
 }
+
 
 UserSchema.methods.findUser = function(username, password) {
 	return new Promise((resolve, reject) => {
@@ -61,6 +60,19 @@ UserSchema.methods.findUser = function(username, password) {
 		}).then(null, e => {
 			reject(ef(e));
 		});
+	});
+}
+
+UserSchema.methods.findUserByToken = function(token) {
+	return new Promise((resolve, reject) => {
+		this.model('User').findOne({token}).then(user => {
+			if (user == null) {
+				return reject(ef("token已过期", et.USER));
+			} 
+			resolve(user);
+		}).then(null, err => {
+			reject(ef(err));
+		})
 	});
 }
 
