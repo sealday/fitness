@@ -20,14 +20,21 @@ let UserSchema = new mongoose.Schema({
 	timestamps: true
 });
 
-UserSchema.methods.addUser = function(username, rawPassword) {
+/**
+ * 增加用户
+ * @param username
+ * @param rawPassword
+ * @returns {Promise} 回调
+ */
+UserSchema.statics.addUser = function(username, rawPassword, Type) {
 	return new Promise((resolve, reject) => {
 		const hashRound = 10;
 		bcrypt.hash(rawPassword, hashRound, (err, password) => {
 			if (err) {
 				reject(ef(err));
 			} else {
-				let user = new User({username, password});
+
+				let user = new Type({username, password});
 				user.save()
 					.then(u => {
 						resolve(u);
@@ -40,7 +47,12 @@ UserSchema.methods.addUser = function(username, rawPassword) {
 	});
 }
 
-
+/**
+ * 查找用户
+ * @param username
+ * @param password
+ * @returns {Promise}
+ */
 UserSchema.methods.findUser = function(username, password) {
 	return new Promise((resolve, reject) => {
 		this.model('User').findOne({username}).then(user => {
@@ -63,6 +75,11 @@ UserSchema.methods.findUser = function(username, password) {
 	});
 }
 
+/**
+ * 根据token来查找用户
+ * @param token
+ * @returns {Promise}
+ */
 UserSchema.methods.findUserByToken = function(token) {
 	return new Promise((resolve, reject) => {
 		this.model('User').findOne({token}).then(user => {
@@ -76,6 +93,12 @@ UserSchema.methods.findUserByToken = function(token) {
 	});
 }
 
+/**
+ * 登录
+ * @param username
+ * @param password
+ * @returns {Promise}
+ */
 UserSchema.methods.login = function(username, password) {
 	return new Promise((resolve, reject) => {
 		this.model('User')
