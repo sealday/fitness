@@ -1,11 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = require('./route');
+const bodyParser = require('body-parser');
 
 mongoose.connect("mongodb://localhost/fitness");
 
 let app = express();
 app.use(express.static(`${__dirname}/public`));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 app.use(router);
 
 app.use((req, res) => {
@@ -16,10 +19,11 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res) => {
-	res.status(500);
+	res.status(res.status || 500);
 	res.json({
-		message: "系统内部错误"
+		message: err
 	});
+	console.log(err);
 });
 
 app.listen(5000);

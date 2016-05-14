@@ -1,30 +1,46 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const secret = 'xinerseal';
+
 // 错误类型
 const et = require('../common/error').type;
 // 错误对象工厂方法
 const ef = require('../common/error').factory;
 
 let UserSchema = new mongoose.Schema({
-	idCard: {type:String,index:true,unique:true,required:true },
 	username: { type: String, index: true, unique: true, required: true },
+	idCard: { type: String, index: true, unique: true },
+	phone: { type: String, index: true, unique: true },
 	password: { type: String, required: true },
 	name: { type: String, default: '小萌新' },
-	phone: String,
-	sex:String
+	sex: String,
+	token: { type: String, index: true }
 }, {
 	timestamps: true
 });
 
-UserSchema.pre('save', function(next) {
-	const hashRound = 10;
-	bcrypt.hash(this.password, hashRound, (err, res) => {
-			// 这里的 err 怎么处理
-			// 这里的 err 有可能是什么呢？
-			this.password = res;
-			next();
+UserSchema.methods.addUser = function(username, rawPassword) {
+	return new Promise((resolve, reject) => {
+		const hashRound = 10;
+		bcrypt.hash(rawPassword, hashRound, (err, password) => {
+			if (err) {
+				reject(ef(err));
+			} else {
+				let user = new User({username, password});
+				user.save()
+					.then(u => {
+						console.log("--");
+						resolve(u);
+					})
+					.then(null, err => {
+						console.log("--------");
+						reject(err);
+					});
+			}
 		});
-});
+	});
+}
 
 UserSchema.methods.findUser = function(username, password) {
 	return new Promise((resolve, reject) => {
@@ -32,7 +48,7 @@ UserSchema.methods.findUser = function(username, password) {
 			if (user == null) {
 				return reject(ef("账号没有找到", et.USER));
 			} 
-			bcrypt.compare(password, u.password, (err, matched) => {
+			bcrypt.compare(password, user.password, (err, matched) => {
 				if (err) {
 					return reject(ef(err));
 				} 
@@ -45,6 +61,29 @@ UserSchema.methods.findUser = function(username, password) {
 		}).then(null, e => {
 			reject(ef(e));
 		});
+	});
+}
+
+UserSchema.methods.login = function(username, password) {
+	return new Promise((resolve, reject) => {
+		this.model('User')
+			.findUser()
+			.then(user => {
+				user.token = crypto
+								.createHmac('sha256', secret)
+								.update(`${user._id}${new Date()}${user.username}${Math.random()}`)
+								.digest('hex');
+				user.save()
+					.then(res => {
+
+					})
+					.then(null, err => {
+						reject(ef(e));
+					});
+			})
+			.then(null, err => {
+				reject(err);
+			});
 	});
 }
 
