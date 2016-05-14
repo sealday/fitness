@@ -40,6 +40,29 @@ MemberSchema.methods.selectCourse = function (courseid) {
 }
 
 
+/**
+ * 会员增加消费记录(测试未通过)
+ * @param name
+ * @param number
+ * @param price
+ * @param username
+ * @returns {Promise}
+ */
+MemberSchema.methods.addRecords = function (name,number,price,username) {
+	return new Promise((resolve,reject)=>{
+		let member = new Member({username});
+
+		member.save({records:{name:name,number:number,price:price}}).then(m => {
+			console.log(m);
+			resolve(m);
+			
+		}).then(null,err=>{
+			console.log(err);
+			reject(err);
+		});
+	});
+
+}
 
 
 let Member = User.discriminator('Member', MemberSchema);
