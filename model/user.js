@@ -6,10 +6,12 @@ const et = require('../common/error').type;
 const ef = require('../common/error').factory;
 
 let UserSchema = new mongoose.Schema({
+	idCard: {type:String,index:true,unique:true,required:true },
 	username: { type: String, index: true, unique: true, required: true },
 	password: { type: String, required: true },
 	name: { type: String, default: '小萌新' },
-	phone: String
+	phone: String,
+	sex:String
 }, {
 	timestamps: true
 });
