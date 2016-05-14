@@ -12,7 +12,7 @@ let CoachSchema = mongoose.Schema({
 
 CoachSchema.set('toJSON', { virtuals: true })
 /**
- * 教练选择课程
+ * 教练教授课程
  * @param courseid
  */
 CoachSchema.methods.selectCourse = function (courseid) {
