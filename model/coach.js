@@ -35,10 +35,17 @@ CoachSchema.methods.selectCourse = function (courseid) {
 }
 
 CoachSchema.methods.selectMember = function (memberid) {
-    let coach = this;
-    
-    
-
+    return new Promise((resolve,reject)=>{
+        Member.findOne({_id:memberid}).then(m =>{
+            this.teachMember.push(m._id);
+            this.save().then(member =>{
+                resolve(member);
+            })
+        }).then(null,err=>{
+            console.log(err);
+            reject(err);
+        });
+    });
 }
 
 let Coach = User.discriminator("Coach", CoachSchema);

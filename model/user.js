@@ -10,8 +10,8 @@ const ef = require('../common/error').factory;
 
 let UserSchema = new mongoose.Schema({
 	username: { type: String, index: true, unique: true, required: true },
-	idCard: { type: String, index: true, unique: true },
-	phone: { type: String, index: true, unique: true },
+	idCard: { type: String, index: true},
+	phone: { type: String, index: true },
 	password: { type: String, required: true },
 	name: { type: String, default: '小萌新' },
 	sex: String,
