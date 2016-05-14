@@ -1,24 +1,25 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const app = express();
-
-const Staff = require("./model/Staff");
-const Member = require("./model/Member");
+const router = require('./route');
 
 mongoose.connect("mongodb://localhost/fitness");
 
-let seal = new Staff({username: "seal", password: "hello"});
-seal.save(e => {
-	if (e) {
-		console.log(e);
-	} else {
-		console.log("success");
-	}
+let app = express();
+app.use(express.static(`${__dirname}/public`));
+app.use(router);
 
-	seal.findUser("hello", "world");
+app.use((req, res) => {
+	res.status(404);
+	res.json({
+		message: "页面没有找到"
+	});
 });
 
-
-app.use(express.static(`${__dirname}/public`));
+app.use((err, req, res) => {
+	res.status(500);
+	res.json({
+		message: "系统内部错误"
+	});
+});
 
 app.listen(5000);
